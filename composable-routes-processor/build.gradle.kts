@@ -5,10 +5,6 @@ plugins {
     id("maven-publish")
 }
 
-val composeRoutesVersion: String by rootProject.extra
-version = composeRoutesVersion
-group = "com.github.MatrixDev.ComposableRoutes"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -45,20 +41,20 @@ dependencies {
     kapt("net.ltgt.gradle.incap:incap-processor:0.3")
 }
 
-/*
 publishing {
+    val composeRoutesVersion: String by rootProject.extra
     publications {
-        maven(MavenPublication) {
-            groupId "dev.matrix.roomigrant"
-            artifactId "roomigrant-compiler"
-            version roomigrant_version
-            artifact("$buildDir/libs/RoomigrantCompiler.jar")
+        create("maven", MavenPublication::class) {
+            groupId = "dev.matrix.composable-routes"
+            artifactId = "composable-routes-processor"
+            version = composeRoutesVersion
+            artifact("$buildDir/libs/composable-routes-processor.jar")
         }
     }
     repositories {
         maven {
             name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/MatrixDev/Roomigrant"
+            setUrl("https://maven.pkg.github.com/MatrixDev/ComposableRoutes")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
@@ -66,4 +62,3 @@ publishing {
         }
     }
 }
-*/

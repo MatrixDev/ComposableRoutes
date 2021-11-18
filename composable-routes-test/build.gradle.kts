@@ -44,7 +44,7 @@ android {
 
 dependencies {
     implementation(project(":composable-routes-lib"))
-    kapt(project(":composable-routes-compiler"))
+    "kapt"(project(":composable-routes-processor"))
 
     // AndroidX & Material
     implementation("androidx.core:core-ktx:1.7.0")
