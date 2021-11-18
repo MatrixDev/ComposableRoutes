@@ -1,5 +1,6 @@
 package dev.matrix.compose_routes.compiler.model
 
+import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import dev.matrix.compose_routes.compiler.AnnotationProcessorState
@@ -15,14 +16,17 @@ data class RouteDestinationArg(
     companion object {
         fun from(state: AnnotationProcessorState, element: VariableElement): RouteDestinationArg {
             val type = NavType.from(state, element)
-            val typeName = state.unbox(element.asType()).asTypeName().copy(
-                nullable = element.getAnnotation(Nullable::class.java) != null,
-            )
+
+            val jTypeName = state.unbox(element.asType())
+            val kTypeName = when (jTypeName == state.jStringTypeElement.asType()) {
+                true -> STRING
+                else -> jTypeName.asTypeName()
+            }.copy(nullable = element.getAnnotation(Nullable::class.java) != null)
 
             return RouteDestinationArg(
                 name = element.simpleName.toString(),
                 navType = type,
-                typeName = typeName,
+                typeName = kTypeName,
             )
         }
     }

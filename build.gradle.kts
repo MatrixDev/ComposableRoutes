@@ -1,6 +1,6 @@
 buildscript {
     val kotlinVersion by extra { "1.5.31" }
-    val composeRoutesVersion by extra { "0.1.7" }
+    val composeRoutesVersion by extra { "0.1.8" }
 
     repositories {
         google()
