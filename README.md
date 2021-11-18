@@ -38,7 +38,7 @@ The next step is to register this route:
 
 ```kotlin
 val navController = rememberNavController()
-NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
+NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()) {
 
     NavRoutes.HomeScreen.register(this)
     NavRoutes.ContactsScreen.register(this)
@@ -51,7 +51,7 @@ NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.P
 
 ```kotlin
 val navController = rememberNavController()
-NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
+NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()) {
 
     NavRoutes.registerAll(this)
 
@@ -94,7 +94,7 @@ Step 2. Add library and compiler dependencies:
 ```kotlin
 dependencies {
     implementation("com.github.MatrixDev.ComposableRoutes:composable-routes-lib:{latest}")
-    kapt("com.github.MatrixDev.ComposableRoutes:composable-routes-compiler:{latest}")
+    kapt("com.github.MatrixDev.ComposableRoutes:composable-routes-processor:{latest}")
 }
 ```
 
