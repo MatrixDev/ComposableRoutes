@@ -64,7 +64,7 @@ private fun generatePath(destination: RouteDestination): PropertySpec {
         append(destination.name)
 
         for (argument in destination.arguments) {
-            if (!argument.typeName.isNullable) {
+            if (argument.typeName.isNullable) {
                 continue
             }
             append("/")
@@ -73,7 +73,7 @@ private fun generatePath(destination: RouteDestination): PropertySpec {
 
         var index = 0
         for (argument in destination.arguments) {
-            if (argument.typeName.isNullable) {
+            if (!argument.typeName.isNullable) {
                 continue
             }
             append(if (++index == 1) "?" else "&")
