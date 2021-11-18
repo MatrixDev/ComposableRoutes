@@ -5,10 +5,6 @@ plugins {
     id("maven-publish")
 }
 
-tasks.jar {
-    archiveFileName.set("${project.name}.jar")
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -52,7 +48,7 @@ publishing {
             groupId = "dev.matrix.composable-routes"
             artifactId = "composable-routes-processor"
             version = composeRoutesVersion
-            artifact("$buildDir/libs/composable-routes-processor.jar")
+            from(components.getByName("java"))
         }
     }
     repositories {
