@@ -100,6 +100,11 @@ dependencies {
 
 More info can be found at https://jitpack.io/#MatrixDev/ComposableRoutes
 
+# TODO
+
+These are just few more nice things to have in the future:
+- Migrate from KAPT to KSP
+
 # License
 
 ```
