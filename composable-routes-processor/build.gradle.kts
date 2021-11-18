@@ -5,6 +5,10 @@ plugins {
     id("maven-publish")
 }
 
+tasks.jar {
+    archiveFileName.set("${project.name}.jar")
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -44,7 +48,7 @@ dependencies {
 publishing {
     val composeRoutesVersion: String by rootProject.extra
     publications {
-        create("maven", MavenPublication::class) {
+        create<MavenPublication>("maven") {
             groupId = "dev.matrix.composable-routes"
             artifactId = "composable-routes-processor"
             version = composeRoutesVersion
