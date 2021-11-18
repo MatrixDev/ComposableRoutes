@@ -23,7 +23,12 @@ fun ScreenNoArgs() {
 
 @Composable
 @ComposableRoute
-fun ScreenWithString(arg0: String) {
+fun ScreenWithString1(arg0: String) {
+}
+
+@Composable
+@ComposableRoute
+fun ScreenWithString2(arg0: String?) {
 }
 
 @Composable

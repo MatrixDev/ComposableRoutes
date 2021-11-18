@@ -217,11 +217,23 @@ private fun generateCompose(
         code.addStatement("")
         code.indent()
         for (argument in destination.arguments) {
-            var expression =
-                argument.navType.getFromBundle(state, argument, "entry.arguments!!")
+            var expression = argument.navType.getFromBundle(state, argument, "entry.arguments!!")
             expression = argument.navType.fromNavValue(state, expression)
 
-            code.addStatement("%L = %L,", argument.name, expression)
+            if (argument.typeName.isNullable) {
+                code.addStatement(
+                    "%L = when (entry.arguments!!.containsKey(%S)) {",
+                    argument.name,
+                    argument.name,
+                )
+                code.indent()
+                code.addStatement("true -> %L", expression)
+                code.addStatement("else -> null")
+                code.unindent()
+                code.addStatement("},")
+            } else {
+                code.addStatement("%L = %L,", argument.name, expression)
+            }
         }
         code.unindent()
     }
