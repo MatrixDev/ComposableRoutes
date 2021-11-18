@@ -143,26 +143,34 @@ private fun generateRegister(
     state: AnnotationProcessorState,
     destination: RouteDestination,
 ): FunSpec {
-    val spec = FunSpec.builder("register")
-        .addParameter("builder", state.navGraphBuilder)
+    val code = CodeBlock.builder()
 
-    spec.addStatement("builder.%M(", state.navComposeFun)
-    spec.addStatement("route = PATH,")
-    spec.addStatement("arguments = listOf(")
+    code.addStatement("builder.%M(", state.navComposeFun)
+    code.indent()
+    code.addStatement("route = PATH,")
+    code.addStatement("arguments = listOf(")
+    code.indent()
     for (argument in destination.arguments) {
-        spec.addStatement(
-            "%M(%S) { type = %L },",
-            state.navArgumentFun,
-            argument.name,
-            argument.navType.getNavType(state),
-        )
+        code.addStatement("%M(%S) {", state.navArgumentFun, argument.name)
+        code.indent()
+        code.addStatement("nullable = true")
+        code.addStatement("type = %L", argument.navType.getNavType(state))
+        code.unindent()
+        code.addStatement("},")
     }
-    spec.addStatement("),")
-    spec.beginControlFlow(")")
-    spec.addStatement("Compose(it)", destination.memberName)
-    spec.endControlFlow()
+    code.unindent()
+    code.addStatement("),")
+    code.unindent()
+    code.addStatement(") {")
+    code.indent()
+    code.addStatement("Compose(it)", destination.memberName)
+    code.unindent()
+    code.addStatement("}")
 
-    return spec.build()
+    return FunSpec.builder("register")
+        .addParameter("builder", state.navGraphBuilder)
+        .addCode(code.build())
+        .build()
 }
 
 private fun generateNavigateToExtension(
@@ -170,52 +178,67 @@ private fun generateNavigateToExtension(
     name: RouteClassName,
     destination: RouteDestination,
 ): FunSpec {
-    val spec = FunSpec.builder("navigateTo${destination.name}")
-        .receiver(state.navHostController)
+    val code = CodeBlock.builder()
 
-    val arguments = CodeBlock.builder()
-    for (argument in destination.arguments) {
-        spec.addParameter(argument.name, argument.typeName)
-        arguments.add("%L = %L,", argument.name, argument.name)
-    }
-
-    spec.addStatement(
-        "navigate(%T.%L(%L))",
+    code.add(
+        "navigate(%T.%L(",
         name.toClassName(),
         destination.name,
-        arguments.build(),
     )
+    if (destination.arguments.isNotEmpty()) {
+        code.addStatement("")
+        code.indent()
+        for (argument in destination.arguments) {
+            code.addStatement("%L = %L,", argument.name, argument.name)
+        }
+        code.unindent()
+    }
+    code.addStatement("))")
 
-    return spec.build()
+    return FunSpec.builder("navigateTo${destination.name}")
+        .receiver(state.navHostController)
+        .also {
+            for (argument in destination.arguments) {
+                it.addParameter(argument.name, argument.typeName)
+            }
+        }
+        .addCode(code.build())
+        .build()
 }
 
 private fun generateCompose(
     state: AnnotationProcessorState,
     destination: RouteDestination,
 ): FunSpec {
-    val spec = FunSpec.builder("Compose")
+    val code = CodeBlock.builder()
+
+    code.add("%L(", destination.memberName)
+    if (destination.arguments.isNotEmpty()) {
+        code.addStatement("")
+        code.indent()
+        for (argument in destination.arguments) {
+            var expression =
+                argument.navType.getFromBundle(state, argument, "entry.arguments!!")
+            expression = argument.navType.fromNavValue(state, expression)
+
+            code.addStatement("%L = %L,", argument.name, expression)
+        }
+        code.unindent()
+    }
+    code.add(")")
+
+    return FunSpec.builder("Compose")
         .addAnnotation(state.composableAnnotation)
+        .also {
+            if (destination.arguments.isEmpty()) it.addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .addMember("%S", "UNUSED_PARAMETER")
+                    .build()
+            )
+        }
         .addParameter("entry", state.navBackStackEntry)
-
-    if (destination.arguments.isEmpty()) {
-        spec.addAnnotation(
-            AnnotationSpec.builder(Suppress::class)
-                .addMember("%S", "UNUSED_PARAMETER")
-                .build()
-        )
-        return spec.addStatement("%L()", destination.memberName).build()
-    }
-
-    spec.addStatement("%L(", destination.memberName)
-    for (argument in destination.arguments) {
-        var expression = argument.navType.getFromBundle(state, argument, "entry.arguments!!")
-        expression = argument.navType.fromNavValue(state, expression)
-
-        spec.addStatement("%L = %L,", argument.name, expression)
-    }
-    spec.addStatement(")")
-
-    return spec.build()
+        .addCode(code.build())
+        .build()
 }
 
 private fun generateRegisterAll(
