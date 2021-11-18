@@ -46,6 +46,11 @@ dependencies {
     implementation(project(":composable-routes-lib"))
     kapt(project(":composable-routes-compiler"))
 
+    // AndroidX & Material
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("com.google.android.material:material:1.4.0")
+
     // Compose
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.ui:ui-tooling:1.0.5")

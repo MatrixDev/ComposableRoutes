@@ -3,7 +3,7 @@ plugins {
     id("kotlin")
     id("kotlin-kapt")
 //    id "com.github.dcendents.android-maven"
-    id("maven-publish")
+//    id("maven-publish")
 }
 
 group = "com.github.MatrixDev"

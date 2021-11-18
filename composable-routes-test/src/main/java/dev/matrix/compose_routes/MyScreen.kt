@@ -92,6 +92,6 @@ fun MainScreen() {
     NavHost(navController = navController, startDestination = NavRoutes.ScreenNoArgs.PATH) {
         NavRoutes.registerAll(this)
     }
-
     navController.navigateToScreenNoArgs()
+    navController.navigateToScreenWithInt(10)
 }
