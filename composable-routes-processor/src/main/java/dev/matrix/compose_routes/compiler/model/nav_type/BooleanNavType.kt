@@ -6,18 +6,18 @@ import dev.matrix.compose_routes.compiler.model.RouteDestinationArg
 
 object BooleanNavType : NavType() {
     override fun getNavType(state: AnnotationProcessorState): CodeBlock {
-        return CodeBlock.of("%T.IntType", state.navType)
+        return CodeBlock.of("%T.BoolType", state.navType)
     }
 
-    override fun serialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return CodeBlock.of("%L", valName)
+    override fun toNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock {
+        return expression
     }
 
-    override fun deserialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return CodeBlock.of("%L", valName)
+    override fun fromNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock {
+        return expression
     }
 
-    override fun getValueFromNavBundle(
+    override fun getFromBundle(
         state: AnnotationProcessorState,
         argument: RouteDestinationArg,
         bundleValName: String,

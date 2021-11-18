@@ -10,39 +10,39 @@ class IntegerNavType(private val kind: TypeKind) : NavType() {
         return CodeBlock.of("%T.IntType", state.navType)
     }
 
-    override fun serialize(state: AnnotationProcessorState, valName: String) = when (kind) {
+    override fun toNavValue(state: AnnotationProcessorState, expression: CodeBlock) = when (kind) {
         TypeKind.INT -> {
-            CodeBlock.of("%L", valName)
+            expression
         }
         TypeKind.BYTE,
         TypeKind.SHORT,
         TypeKind.LONG,
         TypeKind.CHAR -> {
-            CodeBlock.of("%L.toInt()", valName)
+            CodeBlock.of("(%L).toInt()", expression)
         }
         else -> state.error("unsupported type ${kind}, must never happen")
     }
 
-    override fun deserialize(state: AnnotationProcessorState, valName: String) = when (kind) {
+    override fun fromNavValue(state: AnnotationProcessorState, expression: CodeBlock) = when (kind) {
         TypeKind.BYTE -> {
-            CodeBlock.of("%L.toByte()", valName)
+            CodeBlock.of("(%L).toByte()", expression)
         }
         TypeKind.CHAR -> {
-            CodeBlock.of("%L.toChar()", valName)
+            CodeBlock.of("(%L).toChar()", expression)
         }
         TypeKind.SHORT -> {
-            CodeBlock.of("%L.toShort()", valName)
+            CodeBlock.of("(%L).toShort()", expression)
         }
         TypeKind.INT -> {
-            CodeBlock.of("%L", valName)
+            expression
         }
         TypeKind.LONG -> {
-            CodeBlock.of("%L.toLong()", valName)
+            CodeBlock.of("(%L).toLong()", expression)
         }
         else -> state.error("unsupported type ${kind}, must never happen")
     }
 
-    override fun getValueFromNavBundle(
+    override fun getFromBundle(
         state: AnnotationProcessorState,
         argument: RouteDestinationArg,
         bundleValName: String,

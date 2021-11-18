@@ -10,12 +10,12 @@ class SerializableSerializer(private val state: AnnotationProcessorState) {
     private val bisClassName = ClassName("java.io", "ByteArrayInputStream")
     private val base64ClassName = ClassName("java.util", "Base64")
 
-    fun serialize(valName: String): CodeBlock {
-        return CodeBlock.of("%L.serializeToString()", valName)
+    fun serialize(expression: CodeBlock): CodeBlock {
+        return CodeBlock.of("(%L).serializeToString()", expression)
     }
 
-    fun deserialize(valName: String): CodeBlock {
-        return CodeBlock.of("%L.deserializeToSerializable()", valName)
+    fun deserialize(expression: CodeBlock): CodeBlock {
+        return CodeBlock.of("(%L).deserializeToSerializable()", expression)
     }
 
     fun generateSerializer(): FunSpec {

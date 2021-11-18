@@ -10,27 +10,27 @@ class FloatNavType(private val kind: TypeKind) : NavType() {
         return CodeBlock.of("%T.FloatType", state.navType)
     }
 
-    override fun serialize(state: AnnotationProcessorState, valName: String) = when (kind) {
+    override fun toNavValue(state: AnnotationProcessorState, expression: CodeBlock) = when (kind) {
         TypeKind.FLOAT -> {
-            CodeBlock.of("%L", valName)
+            expression
         }
         TypeKind.DOUBLE -> {
-            CodeBlock.of("%L.toFloat()", valName)
+            CodeBlock.of("(%L).toFloat()", expression)
         }
         else -> state.error("unsupported type, must never happen")
     }
 
-    override fun deserialize(state: AnnotationProcessorState, valName: String) = when (kind) {
+    override fun fromNavValue(state: AnnotationProcessorState, expression: CodeBlock) = when (kind) {
         TypeKind.FLOAT -> {
-            CodeBlock.of("%L", valName)
+            expression
         }
         TypeKind.DOUBLE -> {
-            CodeBlock.of("%L.toDouble()", valName)
+            CodeBlock.of("(%L).toDouble()", expression)
         }
         else -> state.error("unsupported type, must never happen")
     }
 
-    override fun getValueFromNavBundle(
+    override fun getFromBundle(
         state: AnnotationProcessorState,
         argument: RouteDestinationArg,
         bundleValName: String,

@@ -50,19 +50,14 @@ sealed class NavType {
         }
     }
 
+    abstract fun toNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock
+    abstract fun fromNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock
+
     open fun getNavType(state: AnnotationProcessorState): CodeBlock {
         return CodeBlock.of("%T.StringType", state.navType)
     }
 
-    open fun serialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return CodeBlock.of("%L", valName)
-    }
-
-    open fun deserialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return CodeBlock.of("%L", valName)
-    }
-
-    open fun getValueFromNavBundle(
+    open fun getFromBundle(
         state: AnnotationProcessorState,
         argument: RouteDestinationArg,
         bundleValName: String,

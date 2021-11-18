@@ -11,15 +11,15 @@ class EnumNavType(private val type: TypeMirror) : NavType() {
         return CodeBlock.of("%T.IntType", state.navType)
     }
 
-    override fun serialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return CodeBlock.of("%L.ordinal", valName)
+    override fun toNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock {
+        return CodeBlock.of("(%L).ordinal", expression)
     }
 
-    override fun deserialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return CodeBlock.of("%T.values()[%L]", type.asTypeName(), valName)
+    override fun fromNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock {
+        return CodeBlock.of("%T.values()[%L]", type.asTypeName(), expression)
     }
 
-    override fun getValueFromNavBundle(
+    override fun getFromBundle(
         state: AnnotationProcessorState,
         argument: RouteDestinationArg,
         bundleValName: String,

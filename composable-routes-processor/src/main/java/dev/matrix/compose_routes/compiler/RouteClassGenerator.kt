@@ -110,8 +110,12 @@ private fun generateInvoke(
             optionalAvailable = true
             continue
         }
-        val expression = argument.navType.serialize(state, argument.name)
-        spec.addStatement("append(%P)", CodeBlock.of("/\${%L}", expression))
+
+        var expression = CodeBlock.of("%L", argument.name)
+        expression = argument.navType.toNavValue(state, expression)
+        expression = CodeBlock.of("/\${%L}", expression)
+
+        spec.addStatement("append(%P)", expression)
     }
 
     if (optionalAvailable) {
@@ -121,11 +125,9 @@ private fun generateInvoke(
                 continue
             }
 
-            val expression = CodeBlock.of(
-                "%L=\${%L}",
-                argument.name,
-                argument.navType.serialize(state, argument.name),
-            )
+            var expression = CodeBlock.of("%L", argument.name)
+            expression = argument.navType.toNavValue(state, expression)
+            expression = CodeBlock.of("%L=\${%L}", argument.name, expression)
 
             spec.beginControlFlow("if (%L != null) {", argument.name)
             spec.addStatement("append(if (++optionalArgumentIndex == 1) '?' else '&')")
@@ -204,17 +206,12 @@ private fun generateCompose(
         return spec.addStatement("%L()", destination.memberName).build()
     }
 
-    for (argument in destination.arguments) {
-        spec.addStatement(
-            "val %L = %L",
-            argument.name,
-            argument.navType.getValueFromNavBundle(state, argument, "entry.arguments!!"),
-        )
-    }
-
     spec.addStatement("%L(", destination.memberName)
     for (argument in destination.arguments) {
-        spec.addStatement("%L,", argument.navType.deserialize(state, argument.name))
+        var expression = argument.navType.getFromBundle(state, argument, "entry.arguments!!")
+        expression = argument.navType.fromNavValue(state, expression)
+
+        spec.addStatement("%L = %L,", argument.name, expression)
     }
     spec.addStatement(")")
 

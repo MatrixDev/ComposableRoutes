@@ -7,12 +7,12 @@ class ParcelableSerializer(private val state: AnnotationProcessorState) {
     private val base64ClassName = ClassName("android.util", "Base64")
     private val parcelClassName = ClassName("android.os", "Parcel")
 
-    fun serialize(valName: String): CodeBlock {
-        return CodeBlock.of("%L.serializeToString()", valName)
+    fun serialize(expression: CodeBlock): CodeBlock {
+        return CodeBlock.of("(%L).serializeToString()", expression)
     }
 
-    fun deserialize(valName: String): CodeBlock {
-        return CodeBlock.of("%L.deserializeToParcelable()", valName)
+    fun deserialize(expression: CodeBlock): CodeBlock {
+        return CodeBlock.of("(%L).deserializeToParcelable()", expression)
     }
 
     fun generateSerializer(): FunSpec {

@@ -5,11 +5,11 @@ import dev.matrix.compose_routes.compiler.AnnotationProcessorState
 import dev.matrix.compose_routes.compiler.serializers.SerializableSerializer
 
 class SerializableNavType(private val serializer: SerializableSerializer) : NavType() {
-    override fun serialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return serializer.serialize(valName)
+    override fun toNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock {
+        return serializer.serialize(expression)
     }
 
-    override fun deserialize(state: AnnotationProcessorState, valName: String): CodeBlock {
-        return serializer.deserialize(valName)
+    override fun fromNavValue(state: AnnotationProcessorState, expression: CodeBlock): CodeBlock {
+        return serializer.deserialize(expression)
     }
 }
