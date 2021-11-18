@@ -2,8 +2,12 @@ plugins {
     id("java-library")
     id("kotlin")
     id("kotlin-kapt")
-    id("com.github.dcendents.android-maven")
+    id("maven-publish")
 }
+
+val composeRoutesVersion: String by rootProject.extra
+version = composeRoutesVersion
+group = "com.github.MatrixDev.ComposableRoutes"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
