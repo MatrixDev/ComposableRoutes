@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.8">
+    <bytecodeTargetLevel target="11">
       <module name="composable-routes.composable-routes-args-android" target="11" />
-      <module name="composable-routes.composable-routes-test" target="11" />
       <module name="ComposeRoutes.composable-routes-app" target="11" />
       <module name="ComposeRoutes.composable-routes-args-android" target="11" />
       <module name="My_Application.app" target="11" />
