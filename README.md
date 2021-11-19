@@ -101,7 +101,7 @@ CompositionLocalProvider(LocalNavController provides navController) {
 }
 ```
 
-That's it. Now you can get `NavController` in any descendant Compose function like this:
+That's it. Now you can get `NavController` in any descendant `@Composable` function like this:
 ```kotlin
 LocalNavController.current.navigateToHomeScreen()
 ```
