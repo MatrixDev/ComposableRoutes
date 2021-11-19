@@ -80,6 +80,32 @@ Library supports following type of arguments:
 - parcelable objects
 - serializable objects
 
+# How to pass NavController to my Screen?
+
+Usually it is pretty easy to pass `NavController` to the screen when registering it with `HavHost`. But it is a little harder when using this library as it will only propagate arguments available in the route.
+
+One of the solutions is to use `CompositionLocalProvider`. The first step is to declare our `CompositionLocal` key for the provider:
+```kotlin
+val LocalNavController = compositionLocalOf<NavHostController> {
+    error("NavController was not provided")
+}
+```
+
+Then we need to add this key to the provider:
+```kotlin
+val navController = rememberNavController()
+CompositionLocalProvider(LocalNavController provides navController) {
+    NavHost(navController = navController, startDestination = NavRoutes.JoinAsGuestScreen()) {
+        NavRoutes.registerAll(this)
+    }
+}
+```
+
+That's it. Now you can get `NavController` in any descendant Compose function like this:
+```kotlin
+LocalNavController.current.navigateToHomeScreen()
+```
+
 # Add to your project
 
 To add this library into your project:
