@@ -38,7 +38,7 @@ The next step is to register this route:
 
 ```kotlin
 val navController = rememberNavController()
-NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()) {
+NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
 
     NavRoutes.HomeScreen.register(this)
     NavRoutes.ContactScreen.register(this)
@@ -51,7 +51,7 @@ NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()
 
 ```kotlin
 val navController = rememberNavController()
-NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()) {
+NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
 
     NavRoutes.registerAll(this)
 
