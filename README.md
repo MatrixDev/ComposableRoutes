@@ -76,9 +76,10 @@ navController.navigateToAboutScreen()
 ```
 
 Library supports following type of arguments:
-- primitives (bool, int, float, etc.)
-- parcelable objects
-- serializable objects
+- primitives - `Boolean`, `Int`, `Float`, etc.)
+- `String`s
+- `Parcelable` objects
+- `Serializable` objects
 
 # How to pass NavController to the Screen?
 
