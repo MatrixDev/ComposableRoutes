@@ -80,9 +80,9 @@ Library supports following type of arguments:
 - parcelable objects
 - serializable objects
 
-# How to pass NavController to my Screen?
+# How to pass NavController to the Screen?
 
-Usually it is pretty easy to pass `NavController` to the screen when registering it with `HavHost`. But it is a little harder when using this library as it will only propagate arguments available in the route.
+Usually you can just pass `NavController` to the Screen when registering it with the `HavHost`. Unfortunately, this is not possible - this library will only propagate arguments available in the route. But there is a very easy solution to this problem.
 
 One of the solutions is to use `CompositionLocalProvider`. The first step is to declare our `CompositionLocal` key for the provider:
 ```kotlin
