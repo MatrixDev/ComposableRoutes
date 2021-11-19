@@ -113,9 +113,9 @@ private fun generateInvoke(
 
         var expression = CodeBlock.of("%L", argument.name)
         expression = argument.navType.toNavValue(state, expression)
-        expression = CodeBlock.of("/\${%L}", expression)
 
-        spec.addStatement("append(%P)", expression)
+        spec.addStatement("append('/')", expression)
+        spec.addStatement("append(%L)", expression)
     }
 
     if (optionalAvailable) {
@@ -127,11 +127,11 @@ private fun generateInvoke(
 
             var expression = CodeBlock.of("%L", argument.name)
             expression = argument.navType.toNavValue(state, expression)
-            expression = CodeBlock.of("%L=\${%L}", argument.name, expression)
 
             spec.beginControlFlow("if (%L != null) {", argument.name)
             spec.addStatement("append(if (++optionalArgumentIndex == 1) '?' else '&')")
-            spec.addStatement("append(%P)", expression)
+            spec.addStatement("append(\"%L=\")", argument.name)
+            spec.addStatement("append(%L)", expression)
             spec.endControlFlow()
         }
     }
@@ -169,39 +169,6 @@ private fun generateRegister(
 
     return FunSpec.builder("register")
         .addParameter("builder", state.navGraphBuilder)
-        .addCode(code.build())
-        .build()
-}
-
-private fun generateNavigateToExtension(
-    state: AnnotationProcessorState,
-    name: RouteClassName,
-    destination: RouteDestination,
-): FunSpec {
-    val code = CodeBlock.builder()
-
-    code.add(
-        "navigate(%T.%L(",
-        name.toClassName(),
-        destination.name,
-    )
-    if (destination.arguments.isNotEmpty()) {
-        code.addStatement("")
-        code.indent()
-        for (argument in destination.arguments) {
-            code.addStatement("%L = %L,", argument.name, argument.name)
-        }
-        code.unindent()
-    }
-    code.addStatement("))")
-
-    return FunSpec.builder("navigateTo${destination.name}")
-        .receiver(state.navHostController)
-        .also {
-            for (argument in destination.arguments) {
-                it.addParameter(argument.name, argument.typeName)
-            }
-        }
         .addCode(code.build())
         .build()
 }
@@ -249,6 +216,39 @@ private fun generateCompose(
             )
         }
         .addParameter("entry", state.navBackStackEntry)
+        .addCode(code.build())
+        .build()
+}
+
+private fun generateNavigateToExtension(
+    state: AnnotationProcessorState,
+    name: RouteClassName,
+    destination: RouteDestination,
+): FunSpec {
+    val code = CodeBlock.builder()
+
+    code.add(
+        "navigate(%T.%L(",
+        name.toClassName(),
+        destination.name,
+    )
+    if (destination.arguments.isNotEmpty()) {
+        code.addStatement("")
+        code.indent()
+        for (argument in destination.arguments) {
+            code.addStatement("%L = %L,", argument.name, argument.name)
+        }
+        code.unindent()
+    }
+    code.addStatement("))")
+
+    return FunSpec.builder("navigateTo${destination.name}")
+        .receiver(state.navHostController)
+        .also {
+            for (argument in destination.arguments) {
+                it.addParameter(argument.name, argument.typeName)
+            }
+        }
         .addCode(code.build())
         .build()
 }
