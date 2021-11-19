@@ -64,14 +64,15 @@ There are few ways to navigate to the specified route:
 // NavController.navigate
 navController.navigate(NavRoutes.HomeScreen())
 
-// generated helpers
+// generated navigateToXXX helpers
 navController.navigateToHomeScreen()
 
 // required arguments
 navController.navigateToContactScreen(id = "1")
 
-// optinal arguments
-navController.navigateToAboutScreen(overrideTitle = null)
+// optional arguments
+navController.navigateToAboutScreen(overrideTitle = "Ny About Title")
+navController.navigateToAboutScreen()
 ```
 
 Library supports following type of arguments:

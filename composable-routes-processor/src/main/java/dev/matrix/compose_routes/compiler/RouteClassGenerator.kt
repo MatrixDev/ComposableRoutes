@@ -94,7 +94,7 @@ private fun generateInvoke(
         .addModifiers(KModifier.OPERATOR)
 
     for (argument in destination.arguments) {
-        spec.addParameter(argument.name, argument.typeName)
+        spec.addParameter(argument.toParameterSpec())
     }
 
     if (destination.arguments.isEmpty()) {
@@ -227,11 +227,7 @@ private fun generateNavigateToExtension(
 ): FunSpec {
     val code = CodeBlock.builder()
 
-    code.add(
-        "navigate(%T.%L(",
-        name.toClassName(),
-        destination.name,
-    )
+    code.add("navigate(%T.%L(", name.toClassName(), destination.name)
     if (destination.arguments.isNotEmpty()) {
         code.addStatement("")
         code.indent()
@@ -246,7 +242,7 @@ private fun generateNavigateToExtension(
         .receiver(state.navHostController)
         .also {
             for (argument in destination.arguments) {
-                it.addParameter(argument.name, argument.typeName)
+                it.addParameter(argument.toParameterSpec())
             }
         }
         .addCode(code.build())

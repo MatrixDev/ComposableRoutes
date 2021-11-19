@@ -1,5 +1,6 @@
 package dev.matrix.compose_routes.compiler.model
 
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
@@ -29,5 +30,13 @@ data class RouteDestinationArg(
                 typeName = kTypeName,
             )
         }
+    }
+
+    fun toParameterSpec(): ParameterSpec {
+        val spec = ParameterSpec.builder(name, typeName)
+        if (typeName.isNullable) {
+            spec.defaultValue("null")
+        }
+        return spec.build()
     }
 }
