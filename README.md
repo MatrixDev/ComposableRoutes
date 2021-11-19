@@ -21,13 +21,13 @@ fun HomeScreen() {
 
 @Composable
 @ComposableRoute
-fun ContactsScreen() {
+fun ContactScreen(id: String) { // required parameter
     // ...
 }
 
 @Composable
 @ComposableRoute
-fun ContactScreen(id: String) {
+fun AboutScreen(overrideTitle: String?) { // optional parameter
     // ...
 }
 ```
@@ -38,11 +38,11 @@ The next step is to register this route:
 
 ```kotlin
 val navController = rememberNavController()
-NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()) {
+NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
 
     NavRoutes.HomeScreen.register(this)
-    NavRoutes.ContactsScreen.register(this)
     NavRoutes.ContactScreen.register(this)
+    NavRoutes.AboutScreen.register(this)
 
 }
 ```
@@ -51,7 +51,7 @@ NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()
 
 ```kotlin
 val navController = rememberNavController()
-NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()) {
+NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
 
     NavRoutes.registerAll(this)
 
@@ -61,13 +61,17 @@ NavHost(navController = navController, startDestination = NavRoutes.HomeScreen()
 There are few ways to navigate to the specified route:
 
 ```kotlin
-// without arguments
+// NavController.navigate
 navController.navigate(NavRoutes.HomeScreen())
-navController.navigateToContactsScreen()
 
-// with arguments
-navController.navigate(NavRoutes.ContactScreen(id = "1"))
+// generated helpers
+navController.navigateToHomeScreen()
+
+// required arguments
 navController.navigateToContactScreen(id = "1")
+
+// optinal arguments
+navController.navigateToAboutScreen(overrideTitle = null)
 ```
 
 Library supports following type of arguments:
@@ -99,6 +103,11 @@ dependencies {
 ```
 
 More info can be found at https://jitpack.io/#MatrixDev/ComposableRoutes
+
+# TODO
+
+These are just few more nice things to have in the future:
+- Migrate from KAPT to KSP
 
 # License
 
