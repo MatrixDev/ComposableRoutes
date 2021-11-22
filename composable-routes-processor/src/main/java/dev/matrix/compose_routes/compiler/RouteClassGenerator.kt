@@ -63,7 +63,7 @@ private fun generatePath(destination: RouteDestination): PropertySpec {
     val path = buildString {
         append(destination.name)
 
-        for (argument in destination.arguments) {
+        for (argument in destination.pathArguments) {
             if (argument.typeName.isNullable) {
                 continue
             }
@@ -72,7 +72,7 @@ private fun generatePath(destination: RouteDestination): PropertySpec {
         }
 
         var index = 0
-        for (argument in destination.arguments) {
+        for (argument in destination.pathArguments) {
             if (!argument.typeName.isNullable) {
                 continue
             }
@@ -93,11 +93,11 @@ private fun generateInvoke(
         .returns(STRING)
         .addModifiers(KModifier.OPERATOR)
 
-    for (argument in destination.arguments) {
+    for (argument in destination.pathArguments) {
         spec.addParameter(argument.toParameterSpec())
     }
 
-    if (destination.arguments.isEmpty()) {
+    if (destination.pathArguments.isEmpty()) {
         return spec.addStatement("return %S", destination.name).build()
     }
 
@@ -105,7 +105,7 @@ private fun generateInvoke(
     spec.addStatement("append(%S)", destination.name)
 
     var optionalAvailable = false
-    for (argument in destination.arguments) {
+    for (argument in destination.pathArguments) {
         if (argument.typeName.isNullable) {
             optionalAvailable = true
             continue
@@ -151,6 +151,9 @@ private fun generateRegister(
     code.addStatement("arguments = listOf(")
     code.indent()
     for (argument in destination.arguments) {
+        if (argument.isNavController) {
+            continue
+        }
         code.addStatement("%M(%S) {", state.navArgumentFun, argument.name)
         code.indent()
         code.addStatement("nullable = true")
@@ -163,12 +166,27 @@ private fun generateRegister(
     code.unindent()
     code.addStatement(") {")
     code.indent()
-    code.addStatement("Compose(it)", destination.memberName)
+
+    code.add("Compose(it")
+    if (destination.hasNavController) {
+        code.add(
+            ", %L = %L",
+            state.defaultNavControllerParameterSpec.name,
+            state.defaultNavControllerParameterSpec.name
+        )
+    }
+    code.addStatement(")")
+
     code.unindent()
     code.addStatement("}")
 
     return FunSpec.builder("register")
         .addParameter("builder", state.navGraphBuilder)
+        .also {
+            if (destination.hasNavController) {
+                it.addParameter(state.defaultNavControllerParameterSpec)
+            }
+        }
         .addCode(code.build())
         .build()
 }
@@ -184,6 +202,15 @@ private fun generateCompose(
         code.addStatement("")
         code.indent()
         for (argument in destination.arguments) {
+            if (argument.isNavController) {
+                code.addStatement(
+                    "%L = %L,",
+                    argument.name,
+                    state.defaultNavControllerParameterSpec.name,
+                )
+                continue
+            }
+
             var expression = argument.navType.getFromBundle(state, argument, "entry.arguments!!")
             expression = argument.navType.fromNavValue(state, expression)
 
@@ -209,13 +236,21 @@ private fun generateCompose(
     return FunSpec.builder("Compose")
         .addAnnotation(state.composableAnnotation)
         .also {
-            if (destination.arguments.isEmpty()) it.addAnnotation(
+            if (destination.pathArguments.isNotEmpty()) {
+                return@also
+            }
+            it.addAnnotation(
                 AnnotationSpec.builder(Suppress::class)
                     .addMember("%S", "UNUSED_PARAMETER")
                     .build()
             )
         }
         .addParameter("entry", state.navBackStackEntry)
+        .also {
+            if (destination.hasNavController) {
+                it.addParameter(state.defaultNavControllerParameterSpec)
+            }
+        }
         .addCode(code.build())
         .build()
 }
@@ -228,10 +263,10 @@ private fun generateNavigateToExtension(
     val code = CodeBlock.builder()
 
     code.add("navigate(%T.%L(", name.toClassName(), destination.name)
-    if (destination.arguments.isNotEmpty()) {
+    if (destination.pathArguments.isNotEmpty()) {
         code.addStatement("")
         code.indent()
-        for (argument in destination.arguments) {
+        for (argument in destination.pathArguments) {
             code.addStatement("%L = %L,", argument.name, argument.name)
         }
         code.unindent()
@@ -241,7 +276,7 @@ private fun generateNavigateToExtension(
     return FunSpec.builder("navigateTo${destination.name}")
         .receiver(state.navHostController)
         .also {
-            for (argument in destination.arguments) {
+            for (argument in destination.pathArguments) {
                 it.addParameter(argument.toParameterSpec())
             }
         }
@@ -253,12 +288,31 @@ private fun generateRegisterAll(
     state: AnnotationProcessorState,
     destinations: Iterable<RouteDestination>,
 ): FunSpec {
-    val spec = FunSpec.builder("registerAll")
-        .addParameter("builder", state.navGraphBuilder)
+    var hasNavController = false
 
+    val code = CodeBlock.builder()
     for (destination in destinations) {
-        spec.addStatement("%L.register(builder)", destination.name)
+        code.add("%L.register(builder", destination.name)
+
+        if (destination.hasNavController) {
+            hasNavController = true
+            code.add(
+                ", %L = %L",
+                state.defaultNavControllerParameterSpec.name,
+                state.defaultNavControllerParameterSpec.name,
+            )
+        }
+
+        code.addStatement(")")
     }
 
-    return spec.build()
+    return FunSpec.builder("registerAll")
+        .addParameter("builder", state.navGraphBuilder)
+        .also {
+            if (hasNavController) {
+                it.addParameter(state.defaultNavControllerParameterSpec)
+            }
+        }
+        .addCode(code.build())
+        .build()
 }

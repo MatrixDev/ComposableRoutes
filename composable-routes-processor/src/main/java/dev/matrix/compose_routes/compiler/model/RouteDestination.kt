@@ -31,4 +31,7 @@ data class RouteDestination(
             )
         }
     }
+
+    val hasNavController = arguments.any { it.isNavController }
+    val pathArguments = arguments.filter { !it.isNavController }
 }

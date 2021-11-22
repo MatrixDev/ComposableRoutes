@@ -38,6 +38,10 @@ sealed class NavType {
                 }
             }
 
+            if (utils.isAssignable(type, state.navControllerTypeElement.asType())) {
+                return NavControllerNavType
+            }
+
             if (utils.isAssignable(type, state.parcelableTypeElement.asType())) {
                 return ParcelableNavType(state.parcelableSerializer)
             }

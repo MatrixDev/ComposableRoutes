@@ -2,6 +2,7 @@ package dev.matrix.compose_routes.compiler
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ParameterSpec
 import dev.matrix.compose_routes.compiler.serializers.ParcelableSerializer
 import dev.matrix.compose_routes.compiler.serializers.SerializableSerializer
 import javax.annotation.processing.ProcessingEnvironment
@@ -31,6 +32,10 @@ class AnnotationProcessorState(val environment: ProcessingEnvironment) {
     val navHostController = ClassName("androidx.navigation", "NavHostController")
     val navComposeFun = MemberName("androidx.navigation.compose", "composable")
     val navArgumentFun = MemberName("androidx.navigation", "navArgument")
+
+    val navController = ClassName("androidx.navigation", "NavController")
+    val navControllerTypeElement = navController.toTypeElement()
+    val defaultNavControllerParameterSpec = ParameterSpec("navController", navController)
 
     fun error(message: String, element: Element? = null): Nothing {
         environment.messager.printMessage(Diagnostic.Kind.ERROR, message, element)

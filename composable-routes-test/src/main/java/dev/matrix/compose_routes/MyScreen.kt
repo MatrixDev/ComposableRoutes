@@ -3,11 +3,9 @@ package dev.matrix.compose_routes
 import android.graphics.PorterDuff
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
@@ -34,6 +32,16 @@ fun ScreenWithString2(arg0: String?) {
 @Composable
 @ComposableRoute
 fun ScreenWithInt(arg0: Int) {
+}
+
+@Composable
+@ComposableRoute
+fun ScreenWithNavController1(controller: NavController) {
+}
+
+@Composable
+@ComposableRoute
+fun ScreenWithNavController2(arg0: Int, controller: NavController) {
 }
 
 @Composable
@@ -95,7 +103,7 @@ fun ScreenWithSerializableArgs(
 fun MainScreen() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = NavRoutes.ScreenNoArgs.PATH) {
-        NavRoutes.registerAll(this)
+        NavRoutes.registerAll(this, navController)
     }
     navController.navigateToScreenNoArgs()
     navController.navigateToScreenWithInt(10)

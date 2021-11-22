@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import dev.matrix.compose_routes.compiler.AnnotationProcessorState
+import dev.matrix.compose_routes.compiler.model.nav_type.NavControllerNavType
 import dev.matrix.compose_routes.compiler.model.nav_type.NavType
 import org.jetbrains.annotations.Nullable
 import javax.lang.model.element.VariableElement
@@ -31,6 +32,8 @@ data class RouteDestinationArg(
             )
         }
     }
+
+    val isNavController = navType == NavControllerNavType
 
     fun toParameterSpec(): ParameterSpec {
         val spec = ParameterSpec.builder(name, typeName)
