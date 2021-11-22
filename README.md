@@ -16,19 +16,25 @@ Add annotation to the Compose screen:
 @Composable
 @ComposableRoute
 fun HomeScreen() {
-    // ...
+    // screen without arguments
 }
 
 @Composable
 @ComposableRoute
-fun ContactScreen(id: String) { // required parameter
-    // ...
+fun ContactScreen(id: String) {
+    // screen with required parameter
 }
 
 @Composable
 @ComposableRoute
-fun AboutScreen(overrideTitle: String?) { // optional parameter
-    // ...
+fun AboutScreen(overrideTitle: String?) {
+    // screen with optional arguments
+}
+
+@Composable
+@ComposableRoute
+fun SettingsScreen(navController: NavController) {
+    // in case you want to pass navController directly
 }
 ```
 
@@ -43,6 +49,7 @@ NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.P
     NavRoutes.HomeScreen.register(this)
     NavRoutes.ContactScreen.register(this)
     NavRoutes.AboutScreen.register(this)
+    NavRoutes.SettingsScreen.register(this, navController = navController)
 
 }
 ```
@@ -53,7 +60,7 @@ NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.P
 val navController = rememberNavController()
 NavHost(navController = navController, startDestination = NavRoutes.HomeScreen.PATH) {
 
-    NavRoutes.registerAll(this)
+    NavRoutes.registerAll(this, navController = navController)
 
 }
 ```
@@ -83,9 +90,33 @@ Library supports following type of arguments:
 
 # How to pass NavController to the Screen?
 
-Usually you can just pass `NavController` to the Screen when registering it with the `HavHost`. Unfortunately, this is not possible - this library will only propagate arguments available in the route. But there is a very easy solution to this problem.
+There are few ways to pass `NavController` to the screen:
 
-One of the solutions is to use `CompositionLocalProvider`. The first step is to declare our `CompositionLocal` key for the provider:
+## Solution #1: By passing it directly to the Screen
+
+All related function will require `NavController` as an argument if at least one Screen takes `NavController` as argument. For example if we have a screen:
+
+```kotlin
+@Composable
+@ComposableRoute
+fun ScreenWithNavController(navController: NavController) {
+    // ...
+}
+```
+
+Than all related `register` and `registerAll` functions will start to require `NavController` as the argument:
+
+```kotlin
+NavRoutes.registerAll(this, navController = navController)
+// or
+NavRoutes.ScreenWithNavController.register(this, navController = navController)
+```
+
+## Solution #2: By using CompositionLocalProvider
+
+On the other hand `CompositionLocalProvider` can be used if you don't want to pass `NavController` directly.
+
+The first step is to declare our `CompositionLocal` key for the provider:
 ```kotlin
 val LocalNavController = compositionLocalOf<NavHostController> {
     error("NavController was not provided")
