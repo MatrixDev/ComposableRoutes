@@ -83,7 +83,7 @@ navController.navigateToAboutScreen()
 ```
 
 Library supports following type of arguments:
-- primitives - `Boolean`, `Int`, `Float`, etc.)
+- primitives (`Boolean`, `Int`, `Float`, etc.)
 - `String`s
 - `Parcelable` objects
 - `Serializable` objects
