@@ -156,7 +156,9 @@ private fun generateRegister(
         }
         code.addStatement("%M(%S) {", state.navArgumentFun, argument.name)
         code.indent()
-        code.addStatement("nullable = true")
+        if (argument.typeName.isNullable) {
+            code.addStatement("nullable = true")
+        }
         code.addStatement("type = %L", argument.navType.getNavType(state))
         code.unindent()
         code.addStatement("},")
